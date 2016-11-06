@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ClassLibrary
 {
-//todo change this 
+//todo change this 2
     public class OpeningHoursHandler 
     {
         private IEnumerable<SeasonSpan> _seasonalSpans;
