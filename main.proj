@@ -1,0 +1,45 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+	  <WorkspaceDir>$(MSBuildProjectDirectory)</WorkspaceDir>
+	  <OutputPath>$(WorkspaceDir)\MyBin</OutputPath>
+	  <TaskPath>$(WorkspaceDir)\MyTasks</TaskPath>	  
+	</PropertyGroup>	
+	<Import Project="MyCommon.targets" />
+	<ItemGroup>
+		<Bin Include="$(OutputPath)\*" />
+	</ItemGroup>
+	<ItemGroup>
+		<TaskBin Include="$(TaskPath)\*" />
+	</ItemGroup>		
+	<Target Name="Build">
+		<Message Text="Prave zahajuji buildovani projektu $(MSBuildProjectName)" />
+		<MakeDir Directories="$(OutputPath)"      Condition="!Exists('$(OutputPath)')" />
+		<MSBuild Projects="@(ProjectToBeBuild)" Targets="Rebuild" StopOnFirstFailure="true"/>
+	</Target>
+	<Target Name="Clean" >
+		<Delete Files="@(Bin)" />
+		<RemoveDir Directories="$(OutputPath)" />
+	</Target>
+	<Target Name="CleanTask" >
+		<Delete Files="@(TaskBin)" />
+		<RemoveDir Directories="$(TaskBin)" />
+	</Target>
+	<Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+	<Target Name="CopyFileToTaskFolder" >	
+		<MakeDir Directories="$(TaskPath)" Condition="!Exists('$(TaskPath)\')" />
+		<Copy SourceFiles="@(Bin)" DestinationFolder="$(TaskPath)" />
+	</Target>
+	<Target Name="MoveFileToTaskFolder" >	
+		<MakeDir Directories="$(TaskPath)" Condition="!Exists('$(TaskPath)\')" /><!--no need for this, will be created automatically -->
+		<Move SourceFiles="@(Bin)" DestinationFolder="$(TaskPath)" />
+	</Target>
+	<Target Name="RunTask" DependsOnTargets="CleanTask;CopyFileToTaskFolder" >	
+		<Exec Command="$(TaskPath)\OpeningHoursTask.exe" />
+	</Target>
+</Project>
+
+
+<!--Add UsingTask -->
+<!--Add Logging output into txt file-->
+<!--Calling a standard command (copy, move, etc.)-->
+<!--Use CallTarget-->
